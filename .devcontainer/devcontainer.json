@@ -1,0 +1,19 @@
+{
+    "name": "Rust for SaBA browser",
+    "dockerFile": "../Dockerfile",
+    "containerUser": "vscode",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "vadimcn.vscode-lldb", // コンパイル言語のデバッグ用
+                "tamasfe.even-better-toml", // *.toml 用
+                "fill-labs.dependi", // crate 管理用
+                "Swellaby.vscode-rust-test-adapter", // Rust 用テストエクスプローラー
+                "JScearcy.rust-doc-viewer", // ローカルで生成された Rust ドキュメント用ビューワ
+                "rust-lang.rust-analyzer", // Rust の入力補完や文法ミスチェック等
+                "github.vscode-github-actions", // GitHub Actions
+                "mhutchie.git-graph" // Git Graph
+            ]
+        }
+    }
+}
