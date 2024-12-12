@@ -98,3 +98,69 @@ impl Header {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn should_be_valid_status_line_only() {
+        // Arrange
+        let raw = "HTTP/1.1 200 OK\n\n".to_string();
+        // Act
+        let res = HttpResponse::new(raw).expect("failed to parse http response");
+        // Assert
+        assert_eq!(res.version(), "HTTP/1.1");
+        assert_eq!(res.status_code(), 200);
+        assert_eq!(res.reason(), "OK");
+    }
+
+    #[test]
+    fn should_be_valid_one_header() {
+        // Arrange
+        let raw = "HTTP/1.1 200 OK\nDate:xx xx xx\n\n".to_string();
+        // Act
+        let res = HttpResponse::new(raw).expect("failed to parse http response");
+        // Assert
+        assert_eq!(res.version(), "HTTP/1.1");
+        assert_eq!(res.status_code(), 200);
+        assert_eq!(res.reason(), "OK");
+        assert_eq!(res.header_value("Date"), Ok("xx xx xx".to_string()));
+    }
+
+    #[test]
+    fn should_be_valid_two_headers_with_white_space() {
+        // Arrange
+        let raw = "HTTP/1.1 200 OK\nDate: xx xx xx\nContent-Length: 42\n\n".to_string();
+        // Act
+        let res = HttpResponse::new(raw).expect("failed to parse http response");
+        // Assert
+        assert_eq!(res.version(), "HTTP/1.1");
+        assert_eq!(res.status_code(), 200);
+        assert_eq!(res.reason(), "OK");
+        assert_eq!(res.header_value("Date"), Ok("xx xx xx".to_string()));
+        assert_eq!(res.header_value("Content-Length"), Ok("42".to_string()));
+    }
+
+    #[test]
+    fn should_be_valid_body() {
+        // Arrange
+        let raw = "HTTP/1.1 200 OK\nDate: xx xx xx\n\nbody message".to_string();
+        // Act
+        let res = HttpResponse::new(raw).expect("failed to parse http response");
+        // Assert
+        assert_eq!(res.version(), "HTTP/1.1");
+        assert_eq!(res.status_code(), 200);
+        assert_eq!(res.reason(), "OK");
+        assert_eq!(res.header_value("Date"), Ok("xx xx xx".to_string()));
+        assert_eq!(res.body(), "body message".to_string());
+    }
+
+    #[test]
+    fn should_be_invalid_no_next_line() {
+        // Arrange
+        let raw = "HTTP/1.1 200 OK".to_string();
+        // Act
+        // Assert
+        assert!(HttpResponse::new(raw).is_err());
+    }
+}
